@@ -115,100 +115,131 @@ class _GroupsBottomNavigationBarState extends State<GroupsBottomNavigationBar>
   ItemsSelector get _itemsBeneath => widget.itemsBeneath;
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Positioned.fill(
-          child: TabBarView(
-            physics: const NeverScrollableScrollPhysics(),
-            controller: _tabController,
-            children: [
-              for (var index = 0; index < widget.items.length; index++)
-                widget.pageBuilder.call(context, index),
-            ],
-          ),
-        ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Container(
-            decoration: BoxDecoration(
-              color: widget.backgroundColor,
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: BackdropFilter(
-              filter: ImageFilter.blur(
-                sigmaX: widget.blurSigmaX,
-                sigmaY: widget.blurSigmaY,
-              ),
-              child: AbstractSliverBottomBar(
-                expandOnOverScroll: true,
-                startsExpanded: true,
-                mainBody: (context, animation) {
-                  return AnimatedBuilder(
-                    animation: animation,
-                    builder: (_, __) {
-                      return TabBar(
-                        isScrollable: true,
-                        indicatorWeight: 0.0,
-                        controller: _tabController,
-                        padding: EdgeInsets.zero,
-                        indicator: const BoxDecoration(),
-                        indicatorPadding: EdgeInsets.zero,
-                        labelPadding: EdgeInsets.zero,
-                        tabs: [
-                          for (var i = 0; i < widget.items.length; i++)
-                            SizedBox(
-                              width: lerpDouble(
-                                MediaQuery.of(context).size.width,
-                                widget.cardWidth ??
-                                    MediaQuery.of(context).size.width * .8,
-                                animation.value,
-                              ),
-                              child: _PreviewCard(
-                                cardElevation: widget.cardElevation,
-                                blurSigmaX: widget.blurSigmaX,
-                                selected: _index == i,
-                                blurSigmaY: widget.blurSigmaY,
-                                cardShrinkedColor: widget.cardShrinkedColor,
-                                cardExpandedColor: widget.cardExpandedColor,
-                                cardShape: widget.cardShape,
-                                selectedCardInnerPadding:
-                                    widget.selectedCardInnerPadding,
-                                selectedCardMargin: widget.selectedCardMargin,
-                                selectedShrinkedStyle:
-                                    widget.selectedShrinkedStyle,
-                                selectedExpandedStyle:
-                                    widget.selectedExpandedStyle,
-                                animation: animation,
-                                item: widget.items[i],
-                              ),
-                            ),
-                        ],
-                      );
-                    },
-                  );
-                },
-                afterBody: (context, animation) {
-                  return Transform.scale(
-                    scale: animation.value,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: _itemsBeneath(_index)
-                          .map(
-                            (e) => Padding(
-                              padding: widget.itemsB,
-                              child: widget.items[e].shrinkedIcon,
-                            ),
-                          )
-                          .toList(),
-                    ),
-                  );
-                },
-              ),
+    return NotificationListener<ScrollNotification>(
+      onNotification: (ScrollNotification notification) {
+        print(notification);
+        bool retValue = false;
+        if (notification.metrics.axis == Axis.vertical ||
+            notification is! ScrollUpdateNotification) return retValue;
+        notification = notification as ScrollUpdateNotification;
+        // final List<ScrollPosition> candidates = <ScrollPosition>[];
+
+        // final List<ScrollPosition> positions =
+        //     pageController.positions.toList();
+        // for (var position in positions) {
+        //   if (position.activity is! IdleScrollActivity) {
+        //     candidates.add(position);
+        //   }
+        // }
+        // ScrollPosition? mostAdvance;
+        // for (var candidate in candidates) {
+        //   mostAdvance = (mostAdvance?.pixels ?? 0.0) > candidate.pixels
+        //       ? mostAdvance
+        //       : candidate;
+        // }
+        // for (var position in positions) {
+        //   if (position != mostAdvance) {
+        //     position.jumpTo(mostAdvance!.pixels);
+        //   }
+        // }
+        // print('setting to ${mostAdvance?.pixels}');
+        // return retValue;
+      },
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: TabBarView(
+              physics: const NeverScrollableScrollPhysics(),
+              controller: _tabController,
+              children: [
+                for (var index = 0; index < widget.items.length; index++)
+                  widget.pageBuilder.call(context, index),
+              ],
             ),
           ),
-        ),
-      ],
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              decoration: BoxDecoration(
+                color: widget.backgroundColor,
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: BackdropFilter(
+                filter: ImageFilter.blur(
+                  sigmaX: widget.blurSigmaX,
+                  sigmaY: widget.blurSigmaY,
+                ),
+                child: AbstractSliverBottomBar(
+                  expandOnOverScroll: true,
+                  startsExpanded: true,
+                  mainBody: (context, animation) {
+                    return AnimatedBuilder(
+                      animation: animation,
+                      builder: (_, __) {
+                        return TabBar(
+                          isScrollable: true,
+                          indicatorWeight: 0.0,
+                          controller: _tabController,
+                          padding: EdgeInsets.zero,
+                          indicator: const BoxDecoration(),
+                          indicatorPadding: EdgeInsets.zero,
+                          labelPadding: EdgeInsets.zero,
+                          tabs: [
+                            for (var i = 0; i < widget.items.length; i++)
+                              SizedBox(
+                                width: lerpDouble(
+                                  MediaQuery.of(context).size.width,
+                                  widget.cardWidth ??
+                                      MediaQuery.of(context).size.width * .8,
+                                  animation.value,
+                                ),
+                                child: _PreviewCard(
+                                  cardElevation: widget.cardElevation,
+                                  blurSigmaX: widget.blurSigmaX,
+                                  selected: _index == i,
+                                  blurSigmaY: widget.blurSigmaY,
+                                  cardShrinkedColor: widget.cardShrinkedColor,
+                                  cardExpandedColor: widget.cardExpandedColor,
+                                  cardShape: widget.cardShape,
+                                  selectedCardInnerPadding:
+                                      widget.selectedCardInnerPadding,
+                                  selectedCardMargin: widget.selectedCardMargin,
+                                  selectedShrinkedStyle:
+                                      widget.selectedShrinkedStyle,
+                                  selectedExpandedStyle:
+                                      widget.selectedExpandedStyle,
+                                  animation: animation,
+                                  item: widget.items[i],
+                                ),
+                              ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  afterBody: (context, animation) {
+                    return Transform.scale(
+                      scale: animation.value,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: _itemsBeneath(_index)
+                            .map(
+                              (e) => Padding(
+                                padding: widget.itemsB,
+                                child: widget.items[e].shrinkedIcon,
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -270,16 +301,21 @@ class _PreviewCard extends StatelessWidget {
   // Animation<double> get animation => super.listenable as Animation<double>;
   @override
   Widget build(BuildContext context) {
-    if (selected) {
-      Scrollable.ensureVisible(
-        context,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.ease,
-      );
-    }
+    try {
+      if (selected) {
+        Scrollable.ensureVisible(
+          context,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.ease,
+        );
+      }
+    } catch (e) {}
     return Card(
-      elevation: 0,
-      // elevation: cardElevation,
+      elevation: lerpDouble(
+        0,
+        cardElevation,
+        animation.value,
+      ),
       margin: EdgeInsets.lerp(
         EdgeInsets.zero,
         selectedCardMargin,
@@ -291,7 +327,9 @@ class _PreviewCard extends StatelessWidget {
         animation.value,
       ),
       shape: ShapeBorder.lerp(
-        const RoundedRectangleBorder(),
+        const RoundedRectangleBorder(
+          borderRadius: BorderRadius.zero,
+        ),
         cardShape,
         animation.value,
       ),

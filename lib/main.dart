@@ -39,37 +39,10 @@ class _AbstractSliverBottomBarTestState
     extends State<AbstractSliverBottomBarTest>
     with SingleTickerProviderStateMixin {
   late final TabController controller;
-  final PageController pageController = PageController();
 
   @override
   void initState() {
     super.initState();
-    controller = TabController(
-      length: testItemsLength,
-      vsync: this,
-    );
-    pageController.addListener(() {
-      final List<ScrollPosition> candidates = <ScrollPosition>[];
-      final List<ScrollPosition> positions = pageController.positions.toList();
-      for (var position in positions) {
-        if (position.activity is! IdleScrollActivity) {
-          candidates.add(position);
-        }
-      }
-      ScrollPosition? mostAdvance;
-      for (var candidate in candidates) {
-        mostAdvance = (mostAdvance?.pixels ?? 0.0) > candidate.pixels
-            ? mostAdvance
-            : candidate;
-      }
-      for (var position in positions) {
-        if (position != mostAdvance) {
-          position.jumpTo(mostAdvance!.pixels);
-        }
-      }
-      print('setting to ${mostAdvance?.pixels}');
-    });
-    // ScrollController().
   }
 
   @override
